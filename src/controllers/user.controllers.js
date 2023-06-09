@@ -1,4 +1,6 @@
+const { Transaction } = require('sequelize');
 const User = require('../models/users.model');
+const Transfer = require('../models/transfers.model');
 
 //?crear usuario
 
@@ -50,6 +52,31 @@ exports.login = async (req, res) => {
     return res.status(201).json({
       message: `Welcome ${user.name}!👍`,
       user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: 'fail',
+      message: 'Something went very wrong👎',
+      error,
+    });
+  }
+};
+
+exports.getTransfers = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const transfers = await Transfer.findAll({
+      where: {
+        senderUserId: id,
+      },
+    });
+
+    return res.status(201).json({
+      message: `Transfers!`,
+      quantity: transfers.length,
+      transfers,
     });
   } catch (error) {
     console.log(error);

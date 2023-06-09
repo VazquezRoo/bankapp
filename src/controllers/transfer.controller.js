@@ -1,4 +1,4 @@
-// const Transfer = require("../models/transfer.model");
+const Transfer = require('../models/transfers.model');
 const User = require('../models/users.model');
 
 exports.sentTransfer = async (req, res) => {
@@ -30,11 +30,23 @@ exports.sentTransfer = async (req, res) => {
       });
     }
 
+    // const transfer = {
+    //   day: new Date(),
+    //   amount: quantity,
+    // };
+
     await userSender.update({ amount: userSender.amount - quantity });
     await userReceiver.update({ amount: userReceiver.amount + quantity });
 
+    const transfer = await Transfer.create({
+      amount: quantity,
+      senderUserId: userSender.id,
+      receiverUserId: userReceiver.id,
+    });
+
     return res.status(201).json({
       message: 'The transfer is succesfull!👍',
+      transfer,
     });
   } catch (error) {
     console.log(error);
