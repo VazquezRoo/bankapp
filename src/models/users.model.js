@@ -1,7 +1,7 @@
-const { DataTypes } = require("sequelize");
-const { db } = require("./../database/config");
+const { DataTypes } = require('sequelize');
+const { db } = require('./../database/config');
 
-const Users = db.define("users", {
+const Users = db.define('users', {
   id: {
     primaryKey: true,
     autoIncrement: true,
@@ -15,7 +15,6 @@ const Users = db.define("users", {
   accountNumber: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 123,
   },
   password: {
     type: DataTypes.STRING,

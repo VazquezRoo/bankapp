@@ -1,31 +1,31 @@
 // const Transfer = require("../models/transfer.model");
-const User = require("../models/users.model");
+const User = require('../models/users.model');
 
 exports.sentTransfer = async (req, res) => {
   try {
-    const { senderUserId, receiverUserId, quantity } = req.body;
+    const { senderAccount, receiverAccount, quantity } = req.body;
 
     const userSender = await User.findOne({
       where: {
-        id: senderUserId,
+        accountNumber: senderAccount,
       },
     });
     const userReceiver = await User.findOne({
       where: {
-        id: receiverUserId,
+        accountNumber: receiverAccount,
       },
     });
 
     if (!userReceiver) {
       return res.status(404).json({
-        status: "error",
+        status: 'error',
         message: `The account with ${receiverUserId} is not found! 👎`,
       });
     }
 
     if (userSender.amount < quantity) {
       return res.status(404).json({
-        status: "error",
+        status: 'error',
         message: `you don't have enough funds! 👎`,
       });
     }
@@ -34,13 +34,13 @@ exports.sentTransfer = async (req, res) => {
     await userReceiver.update({ amount: userReceiver.amount + quantity });
 
     return res.status(201).json({
-      message: "The transfer is succesfull!👍",
+      message: 'The transfer is succesfull!👍',
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      status: "fail",
-      message: "Something went very wrong 👎",
+      status: 'fail',
+      message: 'Something went very wrong 👎',
       error,
     });
   }

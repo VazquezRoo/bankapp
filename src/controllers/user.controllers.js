@@ -6,6 +6,8 @@ exports.createUser = async (req, res) => {
   try {
     const { name, password, amount } = req.body;
 
+    const accountNumber = Math.ceil(Math.random() * (999998 - 100001) + 100001);
+
     if (amount < 1000) {
       return res.status(404).json({
         status: 'error',
@@ -17,6 +19,7 @@ exports.createUser = async (req, res) => {
       name,
       password,
       amount,
+      accountNumber,
     });
 
     return res.status(201).json({
