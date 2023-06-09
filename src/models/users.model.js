@@ -13,7 +13,7 @@ const Users = db.define('users', {
     allowNull: false,
   },
   accountNumber: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
   password: {
@@ -24,9 +24,6 @@ const Users = db.define('users', {
   amount: {
     type: DataTypes.INTEGER,
     allowNull: false,
-  },
-  transfers: {
-    type: DataTypes.STRING,
   },
   status: {
     type: DataTypes.BOOLEAN,

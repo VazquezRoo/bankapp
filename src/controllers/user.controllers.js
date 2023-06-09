@@ -1,89 +1,67 @@
-const { Transaction } = require('sequelize');
 const User = require('../models/users.model');
 const Transfer = require('../models/transfers.model');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
 
 //?crear usuario
 
-exports.createUser = async (req, res) => {
-  try {
-    const { name, password, amount } = req.body;
+exports.createUser = catchAsync(async (req, res, next) => {
+  const { name, password, amount } = req.body;
 
-    const accountNumber = Math.ceil(Math.random() * (999998 - 100001) + 100001);
+  const day = new Date();
+  const accountNumber =
+    day.getMonth().toString() +
+    day.getDate() +
+    day.getFullYear() +
+    day.getHours() +
+    day.getMinutes() +
+    day.getSeconds() +
+    Math.ceil(Math.random() * (998 - 2) + 2);
+  if (amount < 1000) {
+    return next(new AppError('the minimum amount is 1000! 👎'));
+  }
 
-    if (amount < 1000) {
-      return res.status(404).json({
-        status: 'error',
-        message: `the minimum amount is 1000! 👎`,
-      });
-    }
+  const user = await User.create({
+    name,
+    password,
+    amount,
+    accountNumber,
+  });
 
-    const user = await User.create({
-      name,
-      password,
-      amount,
+  return res.status(201).json({
+    message: 'The user has been created!👍',
+    user,
+  });
+});
+
+exports.login = catchAsync(async (req, res) => {
+  const { accountNumber, password } = req.body;
+
+  const user = await User.findOne({
+    where: {
       accountNumber,
-    });
+      password,
+    },
+  });
 
-    return res.status(201).json({
-      message: 'The user has been created!👍',
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went very 👎',
-      error,
-    });
-  }
-};
+  return res.status(201).json({
+    message: `Welcome ${user.name}!👍`,
+    user,
+  });
+});
 
-exports.login = async (req, res) => {
-  try {
-    const { accountNumber, password } = req.body;
+exports.getTransfers = catchAsync(async (req, res) => {
+  const { id } = req.params;
 
-    const user = await User.findOne({
-      where: {
-        accountNumber,
-        password,
-      },
-    });
+  const transfers = await Transfer.findAll({
+    where: {
+      senderUserId: id,
+    },
+  });
 
-    return res.status(201).json({
-      message: `Welcome ${user.name}!👍`,
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went very wrong👎',
-      error,
-    });
-  }
-};
-
-exports.getTransfers = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const transfers = await Transfer.findAll({
-      where: {
-        senderUserId: id,
-      },
-    });
-
-    return res.status(201).json({
-      message: `Transfers!`,
-      quantity: transfers.length,
-      transfers,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      status: 'fail',
-      message: 'Something went very wrong👎',
-      error,
-    });
-  }
-};
+  return res.status(201).json({
+    message: `Transfers!`,
+    quantity: transfers.length,
+    transfers,
+  });
+});
