@@ -1,10 +1,17 @@
-const User = require("../models/users.model");
+const User = require('../models/users.model');
 
 //?crear usuario
 
 exports.createUser = async (req, res) => {
   try {
     const { name, password, amount } = req.body;
+
+    if (amount < 1000) {
+      return res.status(404).json({
+        status: 'error',
+        message: `the minimum amount is 1000! 👎`,
+      });
+    }
 
     const user = await User.create({
       name,
@@ -13,14 +20,14 @@ exports.createUser = async (req, res) => {
     });
 
     return res.status(201).json({
-      message: "The user has been created!👍",
+      message: 'The user has been created!👍',
       user,
     });
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      status: "fail",
-      message: "Something went very 👎",
+      status: 'fail',
+      message: 'Something went very 👎',
       error,
     });
   }
@@ -44,8 +51,8 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      status: "fail",
-      message: "Something went very wrong👎",
+      status: 'fail',
+      message: 'Something went very wrong👎',
       error,
     });
   }
