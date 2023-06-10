@@ -1,7 +1,7 @@
 const Transfer = require('../models/transfers.model');
 const User = require('../models/users.model');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
+// const AppError = require('./../utils/appError');
 
 exports.sentTransfer = catchAsync(async (req, res, next) => {
   const { senderAccount, receiverAccount, quantity } = req.body;
@@ -17,15 +17,15 @@ exports.sentTransfer = catchAsync(async (req, res, next) => {
     },
   });
 
-  if (!userReceiver) {
-    return next(
-      new AppError(`The account with ${receiverUserId} is not found! 👎`)
-    );
-  }
+  // if (!userReceiver) {
+  //   return next(
+  //     new AppError(`The account with ${receiverUserId} is not found! 👎`)
+  //   );
+  // }
 
-  if (userSender.amount < quantity) {
-    return next(new AppError(`You don't have enough funds! 👎`));
-  }
+  // if (userSender.amount < quantity) {
+  //   return next(new AppError(`You don't have enough funds! 👎`));
+  // }
 
   await userSender.update({ amount: userSender.amount - quantity });
   await userReceiver.update({ amount: userReceiver.amount + quantity });

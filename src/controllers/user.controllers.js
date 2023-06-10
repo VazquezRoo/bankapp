@@ -5,21 +5,16 @@ const AppError = require('./../utils/appError');
 
 //?crear usuario
 
-exports.createUser = catchAsync(async (req, res, next) => {
+exports.createUser = catchAsync(async (req, res) => {
   const { name, password, amount } = req.body;
 
   const day = new Date();
   const accountNumber =
-    day.getMonth().toString() +
-    day.getDate() +
-    day.getFullYear() +
-    day.getHours() +
-    day.getMinutes() +
-    day.getSeconds() +
-    Math.ceil(Math.random() * (998 - 2) + 2);
-  if (amount < 1000) {
-    return next(new AppError('the minimum amount is 1000! 👎'));
-  }
+    day.getHours().toString().padStart(2, '0') +
+    day.getMinutes().toString().padStart(2, '0') +
+    Math.ceil(Math.random() * (998 - 2) + 2)
+      .toString()
+      .padStart(3, '0');
 
   const user = await User.create({
     name,
